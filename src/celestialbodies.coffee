@@ -1,32 +1,31 @@
-G=6.674e-11
-TWO_PI=2*Math.PI
-HALF_PI=0.5*Math.PI
+G = 6.674e-11
+TWO_PI = 2 * Math.PI
+HALF_PI = 0.5 * Math.PI
 
-(exports?this).CelestialBody=classCelestialBody
-constructor:(@mass,@radius,@siderealRotation,@orbit,@atmPressure=0,@atmScaleHeight=0)->
-@gravitationalParameter=G*@mass
-@sphereOfInfluence=@orbit.semiMajorAxis*Math.pow(@mass/@orbit.referenceBody.mass,0.4)if@orbit?
-@atmRadius=-Math.log(1e-6)*@atmScaleHeight+@radius
+(exports ? this).CelestialBody = class CelestialBody
+  constructor: (@mass, @radius, @siderealRotation, @orbit, @atmPressure = 0, @atmScaleHeight = 0) ->
+    @gravitationalParameter = G * @mass
+    @sphereOfInfluence = @orbit.semiMajorAxis * Math.pow(@mass / @orbit.referenceBody.mass, 0.4) if @orbit?
+    @atmRadius = -Math.log(1e-6) * @atmScaleHeight + @radius
+  
+  circularOrbitVelocity: (altitude) ->
+    Math.sqrt(@gravitationalParameter / (altitude + @radius))
+  
+  siderealTimeAt: (longitude, time) ->
+    result = ((time / @siderealRotation) * TWO_PI + HALF_PI + longitude) % TWO_PI
+    if result < 0 then result + TWO_PI else result
+  
+  name: -> return k for k, v of CelestialBody when v == this
+  
+  children: ->
+    result = {}
+    result[k] = v for k, v of CelestialBody when v?.orbit?.referenceBody == this
+    result
 
-circularOrbitVelocity:(altitude)->
-Math.sqrt(@gravitationalParameter/(altitude+@radius))
-
-siderealTimeAt:(longitude,time)->
-result=((time/@siderealRotation)*TWO_PI+HALF_PI+longitude)%TWO_PI
-ifresult<0thenresult+TWO_PIelseresult
-
-name:->returnkfork,vofCelestialBodywhenv==this
-
-children:->
-result={}
-result[k]=vfork,vofCelestialBodywhenv?.orbit?.referenceBody==this
-result
-
-CelestialBody.fromJSON=(json)->
-orbit=Orbit.fromJSON(json.orbit)ifjson.orbit?
-newCelestialBody(json.mass,json.radius,json.siderealRotation,orbit,json.atmPressure)
-
-
+CelestialBody.fromJSON = (json) ->
+  orbit = Orbit.fromJSON(json.orbit) if json.orbit?
+  new CelestialBody(json.mass, json.radius, json.siderealRotation, orbit, json.atmPressure)
+  
 #Mass,radius,sideralRotation,<orbit>,atmPressure
 CelestialBody.Sun=Sun=newCelestialBody(1.7714E+28,87200000,999999999,null)
 CelestialBody.67P=67P=newCelestialBody(9.9780E+12,1800,45940.9,newOrbit(Sun,64752126379,0.641,7.0405,27.71613321,12.78,111.0310279))
