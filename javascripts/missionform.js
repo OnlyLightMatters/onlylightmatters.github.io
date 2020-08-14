@@ -5,13 +5,13 @@
   (typeof exports !== "undefined" && exports !== null ? exports : this).prepareOrigins = prepareOrigins = function(selectedOrigin) {
     var addPlanetGroup, bodies, body, listBody, name, originGroup, originSelect, referenceBodyGroup, referenceBodySelect, _i, _len;
     if (selectedOrigin == null) {
-      selectedOrigin = 'Kerbin';
+      selectedOrigin = 'Earth';
     }
     originSelect = $('#originSelect');
     referenceBodySelect = $('#referenceBodySelect');
     originSelect.empty();
     referenceBodySelect.empty();
-    $('<option>').text('Kerbol').appendTo(referenceBodySelect);
+    $('<option>').text('Sun').appendTo(referenceBodySelect);
     listBody = function(referenceBody, originGroup, referenceBodyGroup) {
       var body, children, name, _i, _len, _results;
       children = Object.keys(referenceBody.children());
@@ -39,7 +39,7 @@
         return $('<option>').text(planet).appendTo(selectBox);
       }
     };
-    bodies = Object.keys(CelestialBody.Kerbol.children());
+    bodies = Object.keys(CelestialBody.Sun.children());
     bodies.sort(function(a, b) {
       return CelestialBody[a].orbit.semiMajorAxis - CelestialBody[b].orbit.semiMajorAxis;
     });
@@ -113,7 +113,7 @@
           return _this.setDestination($(event.target).val());
         };
       })(this));
-      this.setOrigin('Kerbin');
+      this.setOrigin('Earth');
       this.setDestination('Duna');
       $('#originAddBtn').click((function(_this) {
         return function(event) {
@@ -173,8 +173,8 @@
             } else {
               $('#kerbinTime').click();
             }
-            _this.setOrigin('Kerbin');
-            return _this.setDestination('Duna');
+            _this.setOrigin('Earth');
+            return _this.setDestination('Mars');
           }), 0);
         };
       })(this));
